@@ -1,3 +1,4 @@
+import { useLogin } from '@/hooks/useLogin';
 import { TLoginForm } from '@/types/form';
 import {
   Box,
@@ -39,7 +40,13 @@ export default function Login() {
     mode: 'onBlur',
     resolver: yupResolver(schema),
   });
-  const onSubmit = (data: TLoginForm) => console.log(data);
+
+  const { mutate } = useLogin();
+  const onSubmit = (data: TLoginForm) => {
+    mutate(data, {
+      onSuccess: () => {},
+    });
+  };
 
   return (
     <Flex
