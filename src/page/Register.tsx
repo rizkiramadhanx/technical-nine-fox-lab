@@ -12,21 +12,23 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { Link as NavLink } from 'react-router-dom';
+import { Link as NavLink, useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TRegisterForm } from '@/types/form';
+import { toast } from 'react-toastify';
 import * as yup from 'yup';
+import { useRegister } from '@/hooks/useRegister';
 
 const schema: yup.ObjectSchema<TRegisterForm> = yup.object().shape({
-  name: yup.string().required('nama harus diisi').min(5, 'minimal 5 karakter'),
-  email: yup.string().email('harus berupa email').required('email harus diisi'),
+  name: yup.string().required('name is required').min(5, 'minimun 5 character'),
+  email: yup.string().email('must format email').required('email is required'),
   password: yup
     .string()
-    .required('password harus diisi')
-    .min(8, 'minimal 8 karakter')
+    .required('Password is required')
+    .min(8, 'Minimun 8 character')
     .matches(
       /^(?=.*[a-zA-Z])(?=.*[0-9])/,
-      'Harus berupa kombinasi alfabet dan angka'
+      'Must combination number and alphabet'
     ),
 });
 
@@ -41,8 +43,22 @@ export default function Register() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: TRegisterForm) => console.log(data);
+  const navigate = useNavigate();
 
+  const { mutate } = useRegister();
+
+  const notify = () => toast('Succes register');
+
+  const onSubmit = (data: TRegisterForm) => {
+    mutate(data, {
+      onSuccess: () => {
+        notify();
+        navigate('/login', {
+          replace: true,
+        });
+      },
+    });
+  };
   return (
     <Flex
       minH={'100vh'}

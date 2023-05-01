@@ -4,6 +4,8 @@ import Login from './page/Login';
 import Register from './page/Register';
 import ApiService from './service/ApiService';
 import TokenService from './service/TokenService';
+import ProtectedRoute from './utils/ProtectedRoute';
+import Dashboard from './page/Dashboard';
 
 const router = createBrowserRouter([
   {
@@ -13,6 +15,14 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />,
+  },
+  {
+    path: '/dashboard',
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
   },
 ]);
 

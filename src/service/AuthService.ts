@@ -18,7 +18,7 @@ const AuthenticationService = {
       TokenService.saveRefreshToken(response.data.data.refresh_token);
       return response;
     } catch (error) {
-      throw console.log(error);
+      throw error;
     }
   },
   register: async (props: TRegisterForm) => {
@@ -56,6 +56,24 @@ const AuthenticationService = {
     };
     try {
       ApiService.setHeader(TokenService.getRefreshToken());
+      const response = await ApiService.customRequest(requestData);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  Profile: async () => {
+    const requestData = {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      url: '/me',
+    };
+
+    try {
+      ApiService.setHeader();
       const response = await ApiService.customRequest(requestData);
       return response;
     } catch (error) {

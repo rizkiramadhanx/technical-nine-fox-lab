@@ -15,22 +15,32 @@ import {
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { Link as NavLink } from 'react-router-dom';
+import { Link as NavLink, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { logged } from '@/redux/action/authSlice';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const schema: yup.ObjectSchema<TLoginForm> = yup.object().shape({
-  email: yup.string().email('harus berupa email').required('email harus diisi'),
+  email: yup.string().email('must format email').required('email is required'),
   password: yup
     .string()
-    .required('password harus diisi')
-    .min(8, 'minimal 8 karakter')
+    .required('Password is required')
+    .min(8, 'Minimun 8 character')
     .matches(
       /^(?=.*[a-zA-Z])(?=.*[0-9])/,
-      'Harus berupa kombinasi alfabet dan angka'
+      'Must combination number and alphabet'
     ),
 });
 
 export default function Login() {
+  const isLogin = useSelector((state: RootState) => state.auth).isLogin;
+
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
   const {
     handleSubmit,
     control,
@@ -41,10 +51,30 @@ export default function Login() {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    if (isLogin) {
+      navigate('/dashboard', {
+        replace: true,
+      });
+    }
+  }, []);
+
+  const notify = () => toast('Succes login');
+  const notifyGagal = () => toast('Failed to login', { type: 'error' });
+
   const { mutate } = useLogin();
   const onSubmit = (data: TLoginForm) => {
     mutate(data, {
-      onSuccess: () => {},
+      onSuccess: () => {
+        dispatch(logged());
+        notify();
+        navigate('/dashboard', {
+          replace: true,
+        });
+      },
+      onError: () => {
+        notifyGagal();
+      },
     });
   };
 
