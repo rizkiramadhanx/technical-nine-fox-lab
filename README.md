@@ -1,6 +1,6 @@
 # technical-nine-fox-lab
 
-this repo is backend 
+this repo is frontend
 
 - command "yarn install"
 - run backend 
